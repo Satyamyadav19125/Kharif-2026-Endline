@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
 import { getSummaryDoc } from "@/lib/sync";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// The dashboard's only read path. Returns the small precomputed summary and
-// lets Vercel's edge cache serve repeat visitors for 2 minutes — so most page
-// loads never touch the function or Mongo, keeping origin transfer tiny.
+// The dashboard's only read path. Returns the small precomputed summary. Now
+// that it's behind login, it uses a private (per-browser) cache — never the
+// shared CDN — which still spares repeat loads and keeps Vercel transfer low.
 export async function GET() {
   try {
+    if (!(await getCurrentUser())) {
+      return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+    }
     const summary = await getSummaryDoc({ syncIfMissing: true });
     if (!summary) {
       return NextResponse.json({ error: "No data yet. Try Refresh." }, { status: 503 });
@@ -17,7 +21,7 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=600",
+        "Cache-Control": "private, max-age=60",
       },
     });
   } catch (e) {

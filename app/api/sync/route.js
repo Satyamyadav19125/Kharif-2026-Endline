@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { runSync } from "@/lib/sync";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -24,9 +25,12 @@ export async function GET(request) {
   }
 }
 
-// Manual refresh from the UI.
+// Manual refresh from the UI (logged-in users only).
 export async function POST(request) {
   try {
+    if (!(await getCurrentUser())) {
+      return NextResponse.json({ ok: false, error: "Not logged in" }, { status: 401 });
+    }
     const force = new URL(request.url).searchParams.get("force") === "1";
     const r = await runSync({ force });
     return NextResponse.json(r);

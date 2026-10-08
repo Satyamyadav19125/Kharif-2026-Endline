@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
 import { fetchAsset, koboForm, koboBase, koboToken } from "@/lib/kobo";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 // Health check for the Settings page: is KoBo reachable, is Mongo reachable.
 export async function GET() {
+  const me = await getCurrentUser();
+  if (!me) return NextResponse.json({ error: "Not logged in" }, { status: 401 });
   const out = {
+    role: me.role,
     kobo: false,
     mongo: false,
     formName: null,

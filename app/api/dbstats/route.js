@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb, DB_NAME } from "@/lib/mongodb";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,9 @@ const FREE_TIER_LIMIT = 512 * 1024 * 1024;
 // Powers the iPhone-style storage widget in Settings.
 export async function GET() {
   try {
+    if (!(await getCurrentUser())) {
+      return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+    }
     const db = await getDb();
     const stats = await db.command({ dbStats: 1, scale: 1 }); // bytes
     const submissions = await db.collection("submissions").estimatedDocumentCount();
@@ -32,7 +36,7 @@ export async function GET() {
         submissions,
         syncedAt: state ? state.lastSyncAt : null,
       },
-      { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } }
+      { headers: { "Cache-Control": "private, max-age=30" } }
     );
   } catch (e) {
     return NextResponse.json({ error: String(e.message || e) }, { status: 500 });

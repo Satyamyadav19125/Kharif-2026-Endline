@@ -5,15 +5,23 @@ A clean, **glance-first** dashboard for the **Kharif 2026 Endline Survey**
 all farms**, broken down by village — tap a village to see exactly which farms
 are done and which are still pending.
 
+- **Login** — admin (full access) and an optional read-only guest viewer.
+- **Two designs** (switch in Settings): **Classic** (same look & feel as the Pipe
+  & Water-Meter tools — KPI tiles + charts) and **Modern** (big progress ring).
 - **Live from KoBo** — pulls submissions using your KoBo API token.
 - **Progress out of the master list** — the denominator (every village + every
-  farm) comes straight from the form's own choice lists, so "16 of 232" is real.
-- **Village → farms drill-in** — pick a village, see each farm's farmer name,
-  enumerator, date, and a 📍 map pin.
-- **Enumerator leaderboard, daily momentum, and data-quality checks.**
-- **Download** everything as Excel or CSV.
+  farm) comes straight from the form's own choice lists, so "15 of 232" is real.
+- **Overview graph** + **Summary analytics** tab (sowing, varieties, soil,
+  irrigation hours, pipe use, inputs, per-village & per-enumerator breakdowns).
+- **Submissions** tab — searchable/filterable table; tap a row for full details.
+- **Clean download** — Excel/CSV with **only the columns the surveyor fills in**
+  (plus the UID and a Summary sheet). The raw meta/system columns are dropped.
 - **MongoDB storage widget** (iPhone-style) in Settings.
 - **Built to stay inside Vercel's free Fast-Data-Transfer limit** (see below).
+
+> **What's new in Level 2:** login, the Classic (Pipe/Meter-style) design + a
+> design switch, the Submissions and Summary tabs, the overview graph, and the
+> filtered download.
 
 ---
 
@@ -103,13 +111,19 @@ git push
 2. Framework preset: **Next.js** (auto-detected). Leave build settings default.
 3. **Environment Variables** — add these (Project → Settings → Environment Variables):
 
-   | Key           | Value                                             |
-   |---------------|---------------------------------------------------|
-   | `MONGODB_URI` | your Atlas connection string                      |
-   | `KOBO_TOKEN`  | your KoBo API key                                 |
-   | `KOBO_FORM`   | `a8moiXkkGSokVURs4yXXg2`                           |
-   | `KOBO_BASE`   | `https://kf.kobotoolbox.org`                      |
-   | `CRON_SECRET` | *(optional)* any random string to guard the cron |
+   | Key              | Value                                             |
+   |------------------|---------------------------------------------------|
+   | `MONGODB_URI`    | your Atlas connection string                      |
+   | `KOBO_TOKEN`     | your KoBo API key                                 |
+   | `KOBO_FORM`      | `a8moiXkkGSokVURs4yXXg2`                           |
+   | `KOBO_BASE`      | `https://kf.kobotoolbox.org`                      |
+   | `ADMIN_PASSWORD` | **your admin login password** (comma-separate for several admins) |
+   | `GUEST_PASSWORD` | *(optional)* a read-only viewer password          |
+   | `CRON_SECRET`    | *(optional)* any random string to guard the cron  |
+
+   **Logging in:** open the site, enter the `ADMIN_PASSWORD` to get full access,
+   or the `GUEST_PASSWORD` for read-only (guests can't download). You can also
+   turn the guest password on/off inside **Settings → Guest viewer**.
 
 4. **Deploy.** First open may take a few seconds while it does the first sync.
 5. Every `git push` after this redeploys automatically.
