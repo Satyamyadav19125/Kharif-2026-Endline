@@ -5,9 +5,10 @@ import Link from "next/link";
 import AppFrame from "@/components/AppFrame";
 import ClassicOverview from "@/components/ClassicOverview";
 import ModernOverview from "@/components/ModernOverview";
+import Landing from "@/components/Landing";
 
 export default function OverviewPage() {
-  return <AppFrame>{(user) => <OverviewInner user={user} />}</AppFrame>;
+  return <AppFrame fallback={<Landing />}>{(user) => <OverviewInner user={user} />}</AppFrame>;
 }
 
 function OverviewInner({ user }) {

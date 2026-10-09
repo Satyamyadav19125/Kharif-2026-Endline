@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSummaryDoc } from "@/lib/sync";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getSettings } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -17,6 +17,13 @@ export async function GET() {
     if (!summary) {
       return NextResponse.json({ error: "No data yet. Try Refresh." }, { status: 503 });
     }
+    // Attach which data-checks are enabled (Settings → Data checks).
+    let checks = { duplicates: true, unlisted: true, gps: true };
+    try {
+      const s = await getSettings();
+      if (s.checks) checks = { ...checks, ...s.checks };
+    } catch {}
+    summary.checks = checks;
     return new NextResponse(JSON.stringify(summary), {
       status: 200,
       headers: {

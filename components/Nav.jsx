@@ -8,7 +8,6 @@ import { toggleTheme } from "@/app/ui";
 const LINKS = [
   { href: "/", label: "Overview", icon: "🏠" },
   { href: "/submissions", label: "Submissions", icon: "📋" },
-  { href: "/summary", label: "Summary", icon: "📊" },
   { href: "/settings", label: "Settings", icon: "⚙️" },
 ];
 
@@ -65,10 +64,13 @@ export default function Nav({ user }) {
           </button>
           <button onClick={() => toggleTheme()} title="Toggle theme" className="p-2 rounded-lg hover:bg-white/10 text-lg">◑</button>
 
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 text-sm font-medium">
-            <span>{user?.role === "admin" ? "👑" : "👁️"}</span>
-            <span className="truncate max-w-[90px]">{user?.name || "User"}</span>
-          </span>
+          <Link href="/profile" title="My profile"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-sm font-medium transition max-w-[140px]">
+            {user?.photo
+              ? <img src={user.photo} alt="" className="w-5 h-5 rounded-full object-cover border border-white/50" />
+              : <span>{user?.role === "admin" ? "👑" : "👁️"}</span>}
+            <span className="truncate">{user?.name || "User"}</span>
+          </Link>
           <button onClick={logout} title="Log out" className="p-2 rounded-lg hover:bg-red-500/40 text-lg">⏻</button>
 
           <button className="md:hidden p-2 -mr-2 rounded-lg hover:bg-white/10" onClick={() => setOpen(!open)} aria-label="Menu">
@@ -83,7 +85,7 @@ export default function Nav({ user }) {
         <div className="md:hidden fixed inset-0 z-[1100] bg-black/40" onClick={() => setOpen(false)}>
           <div className="absolute top-14 right-0 w-64 bg-white shadow-xl rounded-bl-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <nav className="flex flex-col">
-              {links.map((l) => (
+              {[...links, { href: "/profile", label: "My profile", icon: "👤" }].map((l) => (
                 <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
                   className={`px-4 py-3 border-b border-slate-100 flex items-center gap-3 ${pathname === l.href ? "bg-field-50 text-field-900 font-medium" : ""}`}>
                   <span>{l.icon}</span><span>{l.label}</span>

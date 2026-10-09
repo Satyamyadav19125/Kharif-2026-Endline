@@ -20,8 +20,15 @@ are done and which are still pending.
 - **Built to stay inside Vercel's free Fast-Data-Transfer limit** (see below).
 
 > **What's new in Level 2:** login, the Classic (Pipe/Meter-style) design + a
-> design switch, the Submissions and Summary tabs, the overview graph, and the
-> filtered download.
+> design switch, the Submissions tab, the overview graph, and the filtered download.
+>
+> **What's new in Level 3:** a public **landing page**, a full sectioned
+> **Settings** suite like the Pipe/Meter tools (admin **profile** with photo,
+> admin passwords, project info, landing contacts, guest access, data-check
+> toggles, KoBo & sync, storage), **much more detail on both Overview designs**
+> (Classic: varieties, soil, practices, per-village table; Modern: an Insights
+> band with pace projection), and the **Summary now lives only in the downloaded
+> Excel** (first sheet) — not as a separate tab.
 
 ---
 
