@@ -181,14 +181,17 @@ function PasswordsSection({ settings, onSave }) {
 
 function ProjectSection({ settings, onSave }) {
   const p = settings.project || {};
-  const [form, setForm] = useState({ name: "", tagline: "", description: "" });
-  useEffect(() => { setForm({ name: p.name || "", tagline: p.tagline || "", description: p.description || "" }); }, [settings]); // eslint-disable-line
+  const [form, setForm] = useState({ name: "", tagline: "", description: "", formUrl: "" });
+  useEffect(() => { setForm({ name: p.name || "", tagline: p.tagline || "", description: p.description || "", formUrl: p.formUrl || "" }); }, [settings]); // eslint-disable-line
   return (
-    <Panel title="Project info" subtitle="Shown on the public landing page.">
+    <Panel title="Project info" subtitle="Shown on the public landing page, and the KoBo form for 'New form' / prefill links.">
       <div className="space-y-3">
         <Field label="Project name"><input className="inp" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Kharif 2026 Endline Survey" /></Field>
         <Field label="Tagline"><input className="inp" value={form.tagline} onChange={(e) => setForm({ ...form, tagline: e.target.value })} placeholder="End-of-season survey progress dashboard" /></Field>
         <Field label="Description"><textarea className="inp" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="A live dashboard for the Kharif 2026 Endline survey…" /></Field>
+        <Field label="KoBo form URL (for the New-form button & prefill)">
+          <input className="inp" value={form.formUrl} onChange={(e) => setForm({ ...form, formUrl: e.target.value })} placeholder="https://ee.kobotoolbox.org/x/cCn19CYK" />
+        </Field>
         <SaveBtn onClick={() => onSave(form)} />
       </div>
       <InpStyle />

@@ -10,6 +10,7 @@ import Nav from "./Nav";
 // /login. `children` may be a function that receives the current user.
 export default function AppFrame({ children, fallback = null }) {
   const [user, setUser] = useState(undefined); // undefined = loading
+  const [formUrl, setFormUrl] = useState("");
   const router = useRouter();
   const hasFallback = !!fallback;
 
@@ -19,6 +20,7 @@ export default function AppFrame({ children, fallback = null }) {
       .then((r) => r.json())
       .then((d) => {
         if (stop) return;
+        setFormUrl(d.formUrl || "");
         if (d.user) setUser(d.user);
         else { setUser(null); if (!hasFallback) router.replace("/login"); }
       })
@@ -49,9 +51,9 @@ export default function AppFrame({ children, fallback = null }) {
 
   return (
     <>
-      <Nav user={user} />
+      <Nav user={user} formUrl={formUrl} />
       <main className="max-w-6xl mx-auto px-4 py-4 pb-20">
-        {typeof children === "function" ? children(user) : children}
+        {typeof children === "function" ? children(user, formUrl) : children}
       </main>
     </>
   );

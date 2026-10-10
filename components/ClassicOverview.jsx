@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { BarChart, DonutChart, LineChart, HBars } from "@/components/charts";
 import { fmtDate } from "@/app/ui";
+import VillageSheet from "@/components/VillageSheet";
 
-export default function ClassicOverview({ data, user }) {
+export default function ClassicOverview({ data, user, formUrl }) {
   const t = data.totals;
   const a = data.analytics || {};
   const fmt1 = (n) => (n == null ? "—" : Number(n).toFixed(1));
+  const [village, setVillage] = useState(null);
 
   const villagesSorted = [...data.perVillage].sort((x, y) => (x.surveyed / (x.total || 1)) - (y.surveyed / (y.total || 1)));
   const villageBars = [...data.perVillage].filter((v) => v.surveyed > 0).sort((x, y) => y.surveyed - x.surveyed).map((v) => ({ label: v.label, value: v.surveyed }));
@@ -120,7 +123,7 @@ export default function ClassicOverview({ data, user }) {
       </Card>
 
       {/* Per-village table */}
-      <Card title="Village progress" subtitle="Least complete first">
+      <Card title="Village progress" subtitle="Least complete first — tap a village to survey its pending farms">
         <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-sm">
             <thead>
@@ -136,7 +139,7 @@ export default function ClassicOverview({ data, user }) {
               {villagesSorted.map((v) => {
                 const pct = v.total ? Math.round((v.surveyed / v.total) * 100) : 0;
                 return (
-                  <tr key={v.code} className="border-t border-slate-100">
+                  <tr key={v.code} onClick={() => setVillage(v)} className="border-t border-slate-100 cursor-pointer hover:bg-slate-50">
                     <td className="py-2 pr-3 font-medium text-slate-800">{v.label}</td>
                     <td className="py-2 px-3 text-right num text-field-700 font-semibold">{v.surveyed}</td>
                     <td className="py-2 px-3 text-right num">{v.total}</td>
@@ -153,6 +156,8 @@ export default function ClassicOverview({ data, user }) {
           </table>
         </div>
       </Card>
+
+      {village && <VillageSheet v={village} formUrl={formUrl} onClose={() => setVillage(null)} />}
 
       {/* Data checks */}
       {(() => {

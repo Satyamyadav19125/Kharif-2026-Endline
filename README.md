@@ -22,6 +22,13 @@ are done and which are still pending.
 > **What's new in Level 2:** login, the Classic (Pipe/Meter-style) design + a
 > design switch, the Submissions tab, the overview graph, and the filtered download.
 >
+> **What's new in Level 4:** fixed admin-profile persistence (profiles are now
+> keyed by a stable hash of the password, not its position), an **Assignments**
+> tab (give surveyors a login + their villages), **surveyor login** (sees the
+> dashboard focused on their villages), a **"New form"** button that opens the
+> KoBo form, and **prefill** — tap a village → each pending farm has a "Survey →"
+> link that opens the KoBo form pre-filled with that farm's village + ID.
+>
 > **What's new in Level 3:** a public **landing page**, a full sectioned
 > **Settings** suite like the Pipe/Meter tools (admin **profile** with photo,
 > admin passwords, project info, landing contacts, guest access, data-check

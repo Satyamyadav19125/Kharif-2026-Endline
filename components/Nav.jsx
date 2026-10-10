@@ -5,13 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { toggleTheme } from "@/app/ui";
 
-const LINKS = [
-  { href: "/", label: "Overview", icon: "🏠" },
-  { href: "/submissions", label: "Submissions", icon: "📋" },
-  { href: "/settings", label: "Settings", icon: "⚙️" },
-];
+const OVERVIEW = { href: "/", label: "Overview", icon: "🏠" };
+const SUBMISSIONS = { href: "/submissions", label: "Submissions", icon: "📋" };
+const ASSIGNMENTS = { href: "/assignments", label: "Assignments", icon: "👥" };
+const SETTINGS = { href: "/settings", label: "Settings", icon: "⚙️" };
 
-export default function Nav({ user }) {
+export default function Nav({ user, formUrl }) {
   const [open, setOpen] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const pathname = usePathname();
@@ -38,7 +37,11 @@ export default function Nav({ user }) {
     window.location.href = "/login";
   }
 
-  const links = user?.role === "guest" ? LINKS.filter((l) => l.href !== "/settings") : LINKS;
+  const role = user?.role;
+  const links = role === "admin"
+    ? [OVERVIEW, SUBMISSIONS, ASSIGNMENTS, SETTINGS]
+    : [OVERVIEW, SUBMISSIONS]; // surveyor & guest
+  const canSubmit = role !== "guest" && !!formUrl;
 
   return (
     <>
@@ -58,6 +61,12 @@ export default function Nav({ user }) {
             ))}
           </nav>
 
+          {canSubmit && (
+            <a href={formUrl} target="_blank" rel="noreferrer" title="Fill a new form in KoBo"
+              className="hidden sm:inline-flex items-center gap-1 bg-white/90 text-field-800 hover:bg-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm">
+              ➕ <span className="hidden md:inline">New form</span>
+            </a>
+          )}
           <button onClick={refresh} disabled={syncing} title="Refresh data"
             className="p-2 rounded-lg hover:bg-white/10 text-lg disabled:opacity-50">
             {syncing ? "…" : "↻"}
@@ -85,6 +94,12 @@ export default function Nav({ user }) {
         <div className="md:hidden fixed inset-0 z-[1100] bg-black/40" onClick={() => setOpen(false)}>
           <div className="absolute top-14 right-0 w-64 bg-white shadow-xl rounded-bl-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <nav className="flex flex-col">
+              {canSubmit && (
+                <a href={formUrl} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}
+                  className="px-4 py-3 border-b border-slate-100 flex items-center gap-3 bg-field-50 text-field-900 font-medium">
+                  <span>➕</span><span>New form (KoBo)</span>
+                </a>
+              )}
               {[...links, { href: "/profile", label: "My profile", icon: "👤" }].map((l) => (
                 <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
                   className={`px-4 py-3 border-b border-slate-100 flex items-center gap-3 ${pathname === l.href ? "bg-field-50 text-field-900 font-medium" : ""}`}>

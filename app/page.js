@@ -8,18 +8,42 @@ import ModernOverview from "@/components/ModernOverview";
 import Landing from "@/components/Landing";
 
 export default function OverviewPage() {
-  return <AppFrame fallback={<Landing />}>{(user) => <OverviewInner user={user} />}</AppFrame>;
+  return (
+    <AppFrame fallback={<Landing />}>
+      {(user, formUrl) => <OverviewInner user={user} formUrl={formUrl} />}
+    </AppFrame>
+  );
 }
 
-function OverviewInner({ user }) {
+// A surveyor sees the dashboard focused on their assigned villages.
+function filterForSurveyor(data, villages) {
+  if (!villages || !villages.length) return data;
+  const set = new Set(villages);
+  const perVillage = data.perVillage.filter((v) => set.has(v.code));
+  if (!perVillage.length) return data;
+  const surveyed = perVillage.reduce((a, v) => a + v.surveyed, 0);
+  const farms = perVillage.reduce((a, v) => a + v.total, 0);
+  return {
+    ...data,
+    perVillage,
+    totals: {
+      ...data.totals,
+      villages: perVillage.length,
+      farms,
+      surveyed,
+      pending: farms - surveyed,
+      percent: farms ? Math.round((surveyed / farms) * 100) : 0,
+    },
+  };
+}
+
+function OverviewInner({ user, formUrl }) {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
   const [design, setDesign] = useState("classic");
 
   useEffect(() => {
-    try {
-      setDesign(localStorage.getItem("endline_design") || "classic");
-    } catch {}
+    try { setDesign(localStorage.getItem("endline_design") || "classic"); } catch {}
   }, []);
 
   useEffect(() => {
@@ -53,5 +77,9 @@ function OverviewInner({ user }) {
     );
   }
 
-  return design === "modern" ? <ModernOverview data={data} user={user} /> : <ClassicOverview data={data} user={user} />;
+  const view = user?.role === "user" ? filterForSurveyor(data, user.villages) : data;
+
+  return design === "modern"
+    ? <ModernOverview data={view} user={user} formUrl={formUrl} />
+    : <ClassicOverview data={view} user={user} formUrl={formUrl} />;
 }
