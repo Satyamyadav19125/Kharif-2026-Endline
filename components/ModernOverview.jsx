@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Ring, fmtDate, timeAgo } from "@/app/ui";
-import { HBars, LineChart, DonutChart } from "@/components/charts";
+import { HBars, LineChart, DonutChart, BarChart } from "@/components/charts";
 import VillageSheet from "@/components/VillageSheet";
 
 export default function ModernOverview({ data, user, formUrl }) {
@@ -110,6 +110,13 @@ export default function ModernOverview({ data, user, formUrl }) {
         <Panel title="New vs returning"><DonutChart data={[{ label: "Returning", value: t.returning, color: "#16a34a" }, { label: "New", value: t.new, color: "#0ea5e9" }]} /></Panel>
         <Panel title="Sowing method"><DonutChart data={(a.sowing || []).map((s, i) => ({ label: s.label, value: s.count, color: ["#16a34a", "#f59e0b", "#0ea5e9"][i % 3] }))} /></Panel>
       </div>
+
+      {/* Irrigation by stage */}
+      {a.stageHours && a.stageHours.some((s) => s.value > 0) && (
+        <Panel title="Irrigation hours per acre, by stage">
+          <BarChart data={a.stageHours} color="#0ea5e9" />
+        </Panel>
+      )}
 
       {/* Practices */}
       <Panel title="Farm practices">

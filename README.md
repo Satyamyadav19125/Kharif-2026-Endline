@@ -22,6 +22,16 @@ are done and which are still pending.
 > **What's new in Level 2:** login, the Classic (Pipe/Meter-style) design + a
 > design switch, the Submissions tab, the overview graph, and the filtered download.
 >
+> **What's new in Level 5:** a **Map** tab (every surveyed farm pinned, coloured
+> by village), a **Kobo view** tab (raw submissions + deep-links into KoBo), a
+> **Liquid-glass** theme (frosted, animated, water-like) alongside Light/Dark,
+> **cross-app storage** in Settings (how much every app on your Atlas cluster
+> uses, out of 512 MB), **ready prefilled forms inside Assignments** (each
+> surveyor's pending farms as one-tap "Survey →" links), **deeper analytics**
+> (irrigation hours per acre by growth stage, decision basis, zinc/laser/cow-dung),
+> and the Excel now carries **every question the surveyor sees** (incl. photos and
+> repeat answers like per-variety yield) while still hiding back-end columns.
+>
 > **What's new in Level 4:** fixed admin-profile persistence (profiles are now
 > keyed by a stable hash of the password, not its position), an **Assignments**
 > tab (give surveyors a login + their villages), **surveyor login** (sees the

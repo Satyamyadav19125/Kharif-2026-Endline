@@ -18,8 +18,10 @@ const themeScript = `
 (function(){
   try{
     var t = localStorage.getItem('endline_theme') || 'system';
-    var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.classList.toggle('dark', !!dark);
+    var root = document.documentElement;
+    root.classList.remove('dark','glass');
+    if (t === 'liquid') root.classList.add('glass');
+    else if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark');
   }catch(e){}
 })();
 `;

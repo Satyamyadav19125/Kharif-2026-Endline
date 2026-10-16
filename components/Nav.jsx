@@ -7,7 +7,9 @@ import { toggleTheme } from "@/app/ui";
 
 const OVERVIEW = { href: "/", label: "Overview", icon: "🏠" };
 const SUBMISSIONS = { href: "/submissions", label: "Submissions", icon: "📋" };
+const MAP = { href: "/map", label: "Map", icon: "🗺️" };
 const ASSIGNMENTS = { href: "/assignments", label: "Assignments", icon: "👥" };
+const KOBO = { href: "/kobo-view", label: "Kobo view", icon: "🪞" };
 const SETTINGS = { href: "/settings", label: "Settings", icon: "⚙️" };
 
 export default function Nav({ user, formUrl }) {
@@ -39,8 +41,8 @@ export default function Nav({ user, formUrl }) {
 
   const role = user?.role;
   const links = role === "admin"
-    ? [OVERVIEW, SUBMISSIONS, ASSIGNMENTS, SETTINGS]
-    : [OVERVIEW, SUBMISSIONS]; // surveyor & guest
+    ? [OVERVIEW, SUBMISSIONS, MAP, ASSIGNMENTS, KOBO, SETTINGS]
+    : [OVERVIEW, SUBMISSIONS, MAP]; // surveyor & guest
   const canSubmit = role !== "guest" && !!formUrl;
 
   return (
@@ -52,7 +54,7 @@ export default function Nav({ user, formUrl }) {
             <span className="truncate">Endline 2026</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-0.5 text-sm">
+          <nav className="hidden lg:flex items-center gap-0.5 text-sm">
             {links.map((l) => (
               <Link key={l.href} href={l.href}
                 className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap ${pathname === l.href ? "bg-white/20" : "hover:bg-white/10"}`}>
@@ -82,7 +84,7 @@ export default function Nav({ user, formUrl }) {
           </Link>
           <button onClick={logout} title="Log out" className="p-2 rounded-lg hover:bg-red-500/40 text-lg">⏻</button>
 
-          <button className="md:hidden p-2 -mr-2 rounded-lg hover:bg-white/10" onClick={() => setOpen(!open)} aria-label="Menu">
+          <button className="lg:hidden p-2 -mr-2 rounded-lg hover:bg-white/10" onClick={() => setOpen(!open)} aria-label="Menu">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {open ? <path d="M6 18L18 6M6 6l12 12" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
             </svg>
@@ -91,7 +93,7 @@ export default function Nav({ user, formUrl }) {
       </header>
 
       {open && (
-        <div className="md:hidden fixed inset-0 z-[1100] bg-black/40" onClick={() => setOpen(false)}>
+        <div className="lg:hidden fixed inset-0 z-[1100] bg-black/40" onClick={() => setOpen(false)}>
           <div className="absolute top-14 right-0 w-64 bg-white shadow-xl rounded-bl-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <nav className="flex flex-col">
               {canSubmit && (

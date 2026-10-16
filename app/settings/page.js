@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import AppFrame from "@/components/AppFrame";
 import StorageWidget from "@/components/StorageWidget";
+import ClusterStorage from "@/components/ClusterStorage";
 import PhotoUpload from "@/components/PhotoUpload";
-import { timeAgo, toggleTheme } from "@/app/ui";
+import { timeAgo, setTheme, currentTheme } from "@/app/ui";
 
 const SECTIONS = [
   { id: "appearance", icon: "🎨", label: "Appearance", hint: "Design & theme" },
@@ -30,7 +31,7 @@ function SettingsInner({ user }) {
   const [status, setStatus] = useState(null);
   const [msg, setMsg] = useState("");
   const [design, setDesign] = useState("classic");
-  const [dark, setDark] = useState(false);
+  const [theme, setThemeState] = useState("light");
 
   const load = useCallback(() => {
     fetch("/api/settings", { cache: "no-store" }).then((r) => r.json()).then(setSettings).catch(() => {});
@@ -41,7 +42,7 @@ function SettingsInner({ user }) {
   useEffect(() => {
     try {
       setDesign(localStorage.getItem("endline_design") || "classic");
-      setDark(document.documentElement.classList.contains("dark"));
+      setThemeState(currentTheme());
     } catch {}
   }, []);
 
@@ -84,12 +85,14 @@ function SettingsInner({ user }) {
                 <SegBtn on={design === "modern"} onClick={() => { setDesign("modern"); try { localStorage.setItem("endline_design", "modern"); } catch {} flash("Design: Modern"); }}>⭕ Modern</SegBtn>
               </div>
               <p className="text-xs text-slate-500 mt-2"><b>Classic</b> = KPI tiles + charts (like the Pipe & Water-Meter tools). <b>Modern</b> = the big progress-ring dashboard with insights.</p>
-              <div className="mt-4 flex items-center gap-3">
-                <span className="text-sm text-slate-600">Dark mode</span>
-                <button onClick={() => setDark(toggleTheme() === "dark")} className={`w-12 h-7 rounded-full transition relative ${dark ? "bg-field-600" : "bg-slate-300"}`}>
-                  <span className={`absolute top-0.5 w-6 h-6 rounded-full bg-white transition-all ${dark ? "left-[22px]" : "left-0.5"}`} />
-                </button>
+
+              <div className="text-sm text-slate-600 mt-5 mb-2 font-medium">Theme</div>
+              <div className="inline-flex bg-slate-100 rounded-xl p-1 gap-1 flex-wrap">
+                <SegBtn on={theme === "light"} onClick={() => setThemeState(setTheme("light"))}>☀️ Light</SegBtn>
+                <SegBtn on={theme === "dark"} onClick={() => setThemeState(setTheme("dark"))}>🌙 Dark</SegBtn>
+                <SegBtn on={theme === "liquid"} onClick={() => setThemeState(setTheme("liquid"))}>💧 Liquid glass</SegBtn>
               </div>
+              <p className="text-xs text-slate-500 mt-2"><b>Liquid glass</b> is a frosted, translucent look with a slow water-like background.</p>
             </Panel>
           )}
 
@@ -107,11 +110,7 @@ function SettingsInner({ user }) {
 
           {section === "kobo" && <KoboSection status={status} onSynced={load} flash={flash} />}
 
-          {section === "storage" && (
-            <Panel title="Data & storage" subtitle="Live MongoDB Atlas usage (free tier = 512 MB).">
-              <div className="grid place-items-center"><StorageWidget /></div>
-            </Panel>
-          )}
+          {section === "storage" && <StorageSection />}
 
           {!isAdmin && SECTIONS.find((s) => s.id === section)?.admin && (
             <Panel title="Admins only"><p className="text-sm text-slate-500">This section is only available to administrators.</p></Panel>
@@ -292,6 +291,23 @@ function KoboSection({ status, onSynced, flash }) {
         <span className="text-xs text-slate-500">Also runs automatically once a day.</span>
       </div>
     </Panel>
+  );
+}
+
+function StorageSection() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch("/api/dbstats", { cache: "no-store" }).then((r) => r.json()).then(setData).catch(() => {});
+  }, []);
+  return (
+    <div className="space-y-4">
+      <Panel title="This tool's storage" subtitle="How much space Endline 2026 uses in MongoDB Atlas.">
+        <div className="grid place-items-center"><StorageWidget data={data} /></div>
+      </Panel>
+      <Panel title="Whole-cluster storage" subtitle="Every app sharing this Atlas cluster (512 MB free tier total).">
+        {data ? <ClusterStorage data={data} /> : <div className="spin" />}
+      </Panel>
+    </div>
   );
 }
 

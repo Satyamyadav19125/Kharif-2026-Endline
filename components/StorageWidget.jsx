@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { Ring, fmtBytes, timeAgo } from "@/app/ui";
 
 // iPhone-home-screen-style widget showing live MongoDB Atlas storage usage.
-export default function StorageWidget() {
-  const [db, setDb] = useState(null);
+// Pass `data` to reuse a parent's /api/dbstats fetch, or let it fetch its own.
+export default function StorageWidget({ data }) {
+  const [fetched, setFetched] = useState(null);
   useEffect(() => {
+    if (data) return;
     fetch("/api/dbstats", { cache: "no-store" })
       .then((r) => r.json())
-      .then(setDb)
+      .then(setFetched)
       .catch(() => {});
-  }, []);
+  }, [data]);
+  const db = data || fetched;
   const ok = db && !db.error;
   const pct = ok ? db.percent : 0;
 

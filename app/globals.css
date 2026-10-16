@@ -278,3 +278,97 @@ html {
     min-height: 36px;
   }
 }
+
+/* ===================== LIQUID GLASS THEME =====================
+   A translucent "frosted glass" look with a slow-floating, water-like
+   background and gentle ripples. Applied via a `.glass` class on <html>. */
+html.glass,
+html.glass body {
+  background: linear-gradient(135deg, #dcf3ea 0%, #e6f0fb 45%, #f1eafe 100%);
+  color: #14261c;
+}
+html.glass body::before {
+  content: "";
+  position: fixed;
+  inset: -25vh -15vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42vmax 42vmax at 15% 20%, rgba(52, 211, 153, 0.38), transparent 60%),
+    radial-gradient(38vmax 38vmax at 85% 12%, rgba(56, 189, 248, 0.34), transparent 60%),
+    radial-gradient(46vmax 46vmax at 72% 88%, rgba(167, 139, 250, 0.30), transparent 62%),
+    radial-gradient(34vmax 34vmax at 25% 92%, rgba(250, 204, 21, 0.26), transparent 60%);
+  filter: blur(34px);
+  animation: glassFloat 20s ease-in-out infinite alternate;
+}
+@keyframes glassFloat {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(2.5%, -2.5%, 0) scale(1.07) rotate(2deg); }
+  100% { transform: translate3d(-2.5%, 2.5%, 0) scale(1.04) rotate(-2deg); }
+}
+
+/* Frosted cards + surfaces */
+html.glass .bg-white,
+html.glass .bg-field-gradient,
+html.glass .ioswidget {
+  background: rgba(255, 255, 255, 0.45) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 30px rgba(18, 60, 45, 0.12) !important;
+}
+html.glass .ioswidget { color: #0c2318 !important; }
+html.glass .bg-slate-50,
+html.glass .bg-slate-100,
+html.glass .bg-slate-200 { background: rgba(255, 255, 255, 0.32) !important; }
+html.glass .bg-field-50 { background: rgba(187, 247, 208, 0.5) !important; }
+html.glass .bg-amber-50,
+html.glass .bg-earth-50 { background: rgba(254, 243, 199, 0.5) !important; }
+html.glass .bg-sky-50 { background: rgba(224, 242, 254, 0.5) !important; }
+html.glass .bg-emerald-50 { background: rgba(209, 250, 229, 0.5) !important; }
+html.glass .bg-violet-50 { background: rgba(237, 233, 254, 0.55) !important; }
+html.glass .bg-lime-50 { background: rgba(236, 252, 203, 0.55) !important; }
+html.glass .bg-rose-50,
+html.glass .bg-red-50 { background: rgba(254, 226, 226, 0.5) !important; }
+html.glass input,
+html.glass select,
+html.glass textarea {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.75) !important;
+}
+html.glass .border-slate-100,
+html.glass .border-slate-200,
+html.glass .border-slate-300 { border-color: rgba(255, 255, 255, 0.6) !important; }
+
+/* Smooth, watery transitions + a gentle lift on hover */
+html.glass .bg-white,
+html.glass button,
+html.glass a,
+html.glass .shadow-sm {
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease;
+}
+html.glass .shadow-sm:hover { transform: translateY(-2px); }
+
+/* Water-drop ripple on tap */
+html.glass button,
+html.glass .ripple { position: relative; overflow: hidden; }
+html.glass button::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.55s ease, height 0.55s ease, opacity 0.7s ease;
+}
+html.glass button:active::after {
+  width: 260%;
+  height: 260%;
+  opacity: 1;
+  transition: width 0s, height 0s, opacity 0s;
+}

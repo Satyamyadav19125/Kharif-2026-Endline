@@ -47,7 +47,13 @@ export async function GET() {
       const farm = farmsMap.get(idFarm);
       const details = {};
       for (const f of fields) {
-        const v = decodeValue(s[f.key], f, cm);
+        let v;
+        if (f.repeat) {
+          const arr = s[f.repeat];
+          v = Array.isArray(arr) ? arr.map((it) => decodeValue(it[f.key], f, cm)).filter((x) => x !== "").join("; ") : "";
+        } else {
+          v = decodeValue(s[f.key], f, cm);
+        }
         if (v !== "" && v != null) details[f.label] = v;
       }
       return {

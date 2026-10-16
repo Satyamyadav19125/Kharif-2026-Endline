@@ -104,6 +104,19 @@ export default function ClassicOverview({ data, user, formUrl }) {
         )}
       </div>
 
+      {/* Irrigation by stage */}
+      {a.stageHours && a.stageHours.some((s) => s.value > 0) && (
+        <Card title="Irrigation hours per acre, by growth stage" subtitle="Where water goes through the season">
+          <BarChart data={a.stageHours} color="#0ea5e9" />
+        </Card>
+      )}
+
+      {a.timing && a.timing.length > 0 && (
+        <Card title="How farmers decide to irrigate" subtitle="What they base the decision on">
+          <HBars data={a.timing.map((x) => ({ label: x.label, value: x.count }))} color="#0ea5e9" />
+        </Card>
+      )}
+
       {/* Farm practices */}
       <Card title="Farm practices" subtitle="Across surveyed farms">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
@@ -112,6 +125,9 @@ export default function ClassicOverview({ data, user, formUrl }) {
           <Mini label="Avg hours / acre" value={fmt1(a.hoursPerAcre)} />
           <Mini label="Avg Urea bags/acre" value={fmt1(a.urea)} />
           <Mini label="Avg DAP bags/acre" value={fmt1(a.dap)} />
+          <Mini label="Avg Zinc kg/acre" value={fmt1(a.zinc)} />
+          <Mini label="Laser-level (yrs)" value={fmt1(a.laser)} />
+          <Mini label="Cow-dung (yrs)" value={fmt1(a.cowDung)} />
           <Mini label="Used canal water" value={a.canal ?? 0} />
           <Mini label="PVC pipe fixed" value={a.pipeFix ?? 0} />
           <Mini label="Looked into pipe" value={a.pipeLooking ?? 0} />

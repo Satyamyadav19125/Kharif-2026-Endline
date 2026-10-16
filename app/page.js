@@ -31,6 +31,7 @@ function filterForSurveyor(data, villages) {
       villages: perVillage.length,
       farms,
       surveyed,
+      submissions: surveyed,
       pending: farms - surveyed,
       percent: farms ? Math.round((surveyed / farms) * 100) : 0,
     },

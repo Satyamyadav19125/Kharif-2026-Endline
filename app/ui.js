@@ -61,14 +61,29 @@ export function Ring({ percent = 0, size = 148, stroke = 14, caption = "surveyed
   );
 }
 
-export function toggleTheme() {
+// Three themes: light, dark, and "liquid" (glass). Applied as classes on <html>.
+export function currentTheme() {
+  if (typeof document === "undefined") return "light";
+  const c = document.documentElement.classList;
+  if (c.contains("glass")) return "liquid";
+  if (c.contains("dark")) return "dark";
+  return "light";
+}
+
+export function setTheme(mode) {
   try {
     const root = document.documentElement;
-    const isDark = root.classList.contains("dark");
-    root.classList.toggle("dark", !isDark);
-    localStorage.setItem("endline_theme", isDark ? "light" : "dark");
-    return isDark ? "light" : "dark";
-  } catch {
-    return "light";
-  }
+    root.classList.remove("dark", "glass");
+    if (mode === "dark") root.classList.add("dark");
+    else if (mode === "liquid") root.classList.add("glass");
+    localStorage.setItem("endline_theme", mode);
+  } catch {}
+  return mode;
+}
+
+// Cycle light → dark → liquid (used by the nav theme button).
+export function toggleTheme() {
+  const order = ["light", "dark", "liquid"];
+  const next = order[(order.indexOf(currentTheme()) + 1) % order.length];
+  return setTheme(next);
 }

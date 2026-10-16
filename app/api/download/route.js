@@ -17,6 +17,17 @@ function decodeValue(raw, field, choiceMap) {
   return raw;
 }
 
+// Read a question's value from a submission, handling repeat-group questions
+// (their answers live in an array under the repeat's key).
+function cellValue(sub, field, choiceMap) {
+  if (field.repeat) {
+    const arr = sub[field.repeat];
+    if (!Array.isArray(arr)) return "";
+    return arr.map((item) => decodeValue(item[field.key], field, choiceMap)).filter((v) => v !== "").join("; ");
+  }
+  return decodeValue(sub[field.key], field, choiceMap);
+}
+
 // GET /api/download?format=csv|xlsx
 // Exports ONLY the UID + the questions the surveyor actually fills in — the
 // system/meta/calculated columns that appear only in the raw KoBo export are
@@ -41,7 +52,7 @@ export async function GET(request) {
     const header = ["UID", ...fields.map((f) => f.label)];
     const rows = subs.map((s) => {
       const row = { UID: s._id };
-      for (const f of fields) row[f.label] = decodeValue(s[f.key], f, choiceMap);
+      for (const f of fields) row[f.label] = cellValue(s, f, choiceMap);
       return row;
     });
 
